@@ -1,0 +1,32 @@
+-- registration_facade --
+
+@allure.step("Register user")
+def user_registration(self, registration_user):
+    # name, last_name, email, password, repeat_password
+    self._main_page.sing_up_button().click()
+    self._registration_form_page.name_field.send_keys(registration_user.first_name)
+    self._registration_form_page.last_name_field.send_keys(registration_user.last_name)
+    self._registration_form_page.email_field.send_keys(registration_user.email)
+    self._registration_form_page.password_field().send_keys(registration_user.password)
+    self._registration_form_page.reenter_password_field().send_keys(registration_user.password)
+    allure.attach(self.driver.get_screenshot_as_png(), name="screen", attachment_type=AttachmentType.PNG)
+    self._registration_form_page.register_button().click()
+
+--- conftest.py ---
+from data.users import UserCreator, RegistrationTestsDataPath
+
+@pytest.fixture
+def registration_user():
+    users = UserCreator.registration_users(RegistrationTestsDataPath)
+    for user in users:
+        if user.first_name == "John":
+            yield user
+
+--- test file---
+def test_registration(logger, registration_facade, session, registration_user):
+    """ This test should be fixed to use registration_user instead of john_user fixture"""
+    logger.info("User register test")
+    # Replace  registration_facade.registration_user to registration_facade.user_registration(registration_user)
+    registration_facade.user_registration(registration_user)
+    assert registration_facade.check_is_user_logged_in()
+
