@@ -61,16 +61,15 @@ def registration_facade(driver):
 
 
 @pytest.fixture
-def session():
+def session(registration_user):
     session = requests.Session()
     user = yield session
     session.post(url="https://qauto2.forstudy.space/api/auth/signin", json={
-        "email": "aaa@aaa.con",
-        "password": "Pass 1space",
+        "email": registration_user.email,
+        "password": registration_user.password,
         "remember": False
     })
     session.delete(url="https://qauto2.forstudy.space/api/users")
-
 
 if __name__ == "__main__":
     print(registration_user())
