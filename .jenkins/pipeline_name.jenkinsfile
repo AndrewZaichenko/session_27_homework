@@ -4,7 +4,7 @@ pipeline {
         stage("First Stage") {
             steps {
                 println("Show system installed python version")
-                sh 'python3 -V'
+                sh 'python -V'
                 sh 'rm -rf auto_project'
                 sh 'git clone https://github.com/tishyk/auto_project.git'
                 sh 'ls -la auto_project'
@@ -13,13 +13,13 @@ pipeline {
         stage('Test') {
             steps {
                 println("Show system installed python version for a tests")
-                sh 'python3 --version'
+                sh 'python --version'
             }
         }
         stage('Deploy') {
             steps {
                 println("Show system installed python version for a deploy")
-                sh 'python3 --version'
+                sh 'python --version'
             }
         } 
     }
