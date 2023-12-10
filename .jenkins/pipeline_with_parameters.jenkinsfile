@@ -15,7 +15,7 @@ pipeline {
                 // sh 'echo ${params.dev_branch}'
                 sh "echo ${params.branch}"
                 println("Show branch: ${params.branch}")
-                sh 'python3 --version'
+                sh 'python --version'
                 script {
                     if ( "${params.test_target}" ==  "site1" ) {
                         println("Hello from ${STAGE_NAME} and param ${params.test_target}")
@@ -34,7 +34,7 @@ pipeline {
                 }
             steps {
                 println("Tests target ${params.test_target}")
-                sh 'python3 --version'
+                sh 'python --version'
                 sh "pwd && ls -la"
             }
         }   
@@ -45,7 +45,7 @@ pipeline {
                 }
             steps {
                 println("Tests target ${params.test_target}")
-                sh 'python3 --version'
+                sh 'python --version'
                 sh "pwd && ls -la"
             }
         }  
