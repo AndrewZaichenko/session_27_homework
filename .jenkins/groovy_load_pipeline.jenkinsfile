@@ -1,0 +1,39 @@
+PATH = "/var/lib/jenkins/workspace/TestProject/groovy_load_pipeline"
+def importCommon() {common = load "${PATH}/common_functions.groovy"; return common; }
+
+pipeline {
+    agent 'any'
+    parameters {
+        string(name: "dev_branch", defaultValue: "main", description: "which branch to use")
+        booleanParam(name: "run_tests", description: "Run test stage from dev_branch repo", defaultValue: false)
+        choice(name: "test_target", choices:["all", "site1", "site2", "locals"],  description: "Run test stage for test targets [all, site1, site2, locals]")
+        }
+    environment {
+      JOB_NAME = "hello_from_groovy"
+      common = importCommon()
+    }
+    stages {
+        stage('Build Stage') {
+            steps { script {
+                sh("pwd")
+                if (common) {
+                    common.show_branches()
+                }
+            }}
+        }
+        stage('Test Stage') {
+            when {
+                beforeAgent true
+                expression { params.run_tests == true}
+                }
+            steps { script {
+                println("Tests target ${params.test_target}")
+                sh 'python3 --version'
+                sh "pwd && ls -la"
+                 for (branch in ["main", "develop"]) {
+                    println("${branch}")
+                 }
+            }}
+        }      
+    }
+}

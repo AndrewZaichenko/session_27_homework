@@ -1,0 +1,25 @@
+pipeline {
+    agent { docker  { image 'python:3.10.1-alpine' } }
+    stages {
+        stage('build') {
+            steps {
+                sh 'python3 --version'
+            }
+        }
+        stage('test') {
+            steps {
+                sh 'python3 --version'
+            }
+        }
+        stage('Post actions') {
+            steps {
+                sh 'python3 --version'
+            }
+        }
+         stage('Send Mail') {
+            steps {
+                sh 'python3 --version'
+            }
+        }
+    }
+}

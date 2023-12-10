@@ -1,0 +1,49 @@
+pipeline {
+    agent 'any'
+    parameters {
+        string(name: "branch", defaultValue: "main", description: "which branch to use")
+        choice(name: "test_target", choices:["all", "site1", "site2"],  description: "Run test stage for test targets [all, site1, site2, locals]")
+        }
+    stages {
+        stage('Build Stage') {
+            when {
+                beforeAgent true
+                expression { !params.tests_only }
+                }
+            steps {
+                // sh 'echo ${params.dev_branch}'
+                sh "echo ${params.branch}"
+                println("Show branch: ${params.branch}")
+                sh 'python3 --version'
+                script {
+                    if ( "${params.test_target}" ==  "site1" ) {
+                        println("Hello from ${STAGE_NAME} and param ${params.test_target}")
+                    }
+                    else {
+                        println("Skipped for site1")
+                    }
+                    }
+                println("Run stage with parameter: ${params.branch}")
+            }
+            }
+        stage ('Parallel Testing'){
+            parallel { 
+                stage('Test Site1') {
+                    steps {
+                        println("Tests target ${params.test_target}")
+                        sh 'python3 --version'
+                        sh "pwd && ls -la"
+                    }
+                }   
+                stage('Test Site2') {
+                    steps {
+                        println("Tests target ${params.test_target}")
+                        sh 'python3 --version'
+                        sh "pwd && ls -la"
+                        sh "sleep 50"
+                    }
+                }  
+            }
+        }
+    }
+}

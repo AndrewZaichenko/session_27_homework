@@ -1,0 +1,34 @@
+def jobParameters = []
+jobParameters.add([$class: "StringParameterValue", name: "branch", value: "main"])
+jobParameters.add([$class: "BooleanParameterValue", name: "tests_only", value: true])
+
+pipeline {
+    agent 'any'
+    parameters {
+        string(name: "branch", defaultValue: "main", description: "which branch to use")
+        booleanParam(name: "run_tests", description: "Run test stage from dev_branch repo", defaultValue: false)
+        choice(name: "test_target", choices:["all", "site1", "site2", "locals"],  description: "Run test stage for test targets [all, site1, site2, locals]")
+        }
+        
+    stages {
+        stage('Build Product') {
+            steps { script {
+                def job_build = build job: "First Pipeline", propagate: false, wait: true
+                if ( job_build.getResult() == "FAILURE") {
+                  currentBuild.result = "FAILURE"
+                  }
+            }}
+        } 
+
+        stage('Test Stage 1') {
+            steps { script {
+                jobParameters.add([$class: "StringParameterValue", name: "test_only", value: "site1"])
+                
+                def job_build = build job: "Pipeline with Parameters", parameters: jobParameters, propagate: false, wait: true
+                if ( job_build.getResult() == "FAILURE") {
+                  currentBuild.result = "FAILURE"
+                  }
+            }}
+        }     
+    }
+}

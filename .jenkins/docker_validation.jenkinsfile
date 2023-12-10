@@ -1,0 +1,27 @@
+pipeline {
+    agent { docker  { 
+    	image 'ubuntu:22.04'
+	args '-e USER="hillel"'} }
+    stages {
+        stage('Framework Setup') {
+            steps {
+                sh "chmod +x install.sh && sudo ./install.sh"
+            }
+        }
+        stage('Selenium Validation') {
+            steps {
+                sh '. hillel_venv/bin/activate && pytest -s test/'
+            }
+        }
+        stage('Post actions') {
+            steps {
+                sh 'echo "CleanUp Stage"'
+            }
+        }
+         stage('Send Mail') {
+            steps {
+                sh 'python3 --version'
+            }
+        }
+    }
+}

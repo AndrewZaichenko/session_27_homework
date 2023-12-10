@@ -1,0 +1,23 @@
+pipeline {
+    agent 'any'
+    stages {
+        stage('Build') {
+            steps {
+                println("Show system installed python version")
+                sh 'python3 --version'
+            }
+        }
+        stage('Test') {
+            steps {
+                println("Show system installed python version for a tests")
+                sh 'python3 --version'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                println("Show system installed python version for a deploy")
+                sh 'python3 --version'
+            }
+        }        
+    }
+}

@@ -1,0 +1,53 @@
+pipeline {
+    agent 'any'
+    parameters {
+        string(name: "branch", defaultValue: "main", description: "which branch to use")
+        booleanParam(name: "tests_only", description: "Run test stage from dev_branch repo", defaultValue: false)
+        choice(name: "test_target", choices:["all", "site1", "site2"],  description: "Run test stage for test targets [all, site1, site2, locals]")
+        }
+    stages {
+        stage('Build Stage') {
+            when {
+                beforeAgent true
+                expression { !params.tests_only }
+                }
+            steps {
+                // sh 'echo ${params.dev_branch}'
+                sh "echo ${params.branch}"
+                println("Show branch: ${params.branch}")
+                sh 'python3 --version'
+                script {
+                    if ( "${params.test_target}" ==  "site1" ) {
+                        println("Hello from ${STAGE_NAME} and param ${params.test_target}")
+                    }
+                    else {
+                        println("Skipped for site1")
+                    }
+                    }
+                println("Run stage with parameter: ${params.branch}")
+            }
+        }
+        stage('Test Site1') {
+            when {
+                beforeAgent true
+                expression { params.tests_only && (params.test_target ==  "site1" || params.test_target ==  "all")}
+                }
+            steps {
+                println("Tests target ${params.test_target}")
+                sh 'python3 --version'
+                sh "pwd && ls -la"
+            }
+        }   
+        stage('Test Site2') {
+            when {
+                beforeAgent true
+                expression { params.tests_only && (params.test_target ==  "site2" || params.test_target ==  "all")}
+                }
+            steps {
+                println("Tests target ${params.test_target}")
+                sh 'python3 --version'
+                sh "pwd && ls -la"
+            }
+        }  
+    }
+}
